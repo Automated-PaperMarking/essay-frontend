@@ -4,11 +4,15 @@ import PaperViewer from "@/components/paper/PaperViewer";
 import { MarkingProcess } from "@/types/MarkingProcess";
 import { useState } from "react";
 import { usePaperData } from "@/hooks/usePaper";
+import MarkingPogress from "@/components/pogress-marking";
 
 export default function Home() {
-  const [markingProcess, setMarkingProcess] = useState<MarkingProcess | null>(
-    null
-  );
+  const [markingProcess, setMarkingProcess] = useState<MarkingProcess>({
+    status: "idle",
+    paperId: "",
+    markingId: "",
+    paper: null,
+  });
   const [paperId, setPaperId] = useState<string>("");
 
   // Get paper from marking process
@@ -26,9 +30,10 @@ export default function Home() {
   return (
     <center className=" min-h-screen  w-full p-4 ">
       <div className="container">
-        <h1>Automated Grading System for Essay Type of Questions</h1>
-
-      
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+          Automated Essay Marking
+        </h2>
+        {markingProcess && <MarkingPogress markingProcess={markingProcess} />}
 
         {/* paper and marking input form */}
         <MarkingForm setMarkingProcess={setMarkingProcess} />

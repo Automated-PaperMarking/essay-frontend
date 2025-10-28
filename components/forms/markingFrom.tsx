@@ -81,9 +81,7 @@ const MarkingForm: React.FC<MarkingFormProps> = ({ setMarkingProcess }) => {
 
   return (
     <form onSubmit={handleSubmit} className="w-full  mx-auto mt-10 ">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
-        Automated Essay Marking
-      </h2>
+     
       <div className="space-y-6 grid grid-cols-2 gap-4">
         {/* Marking Scheme Upload */}
         <div className="flex flex-col mb-4">
