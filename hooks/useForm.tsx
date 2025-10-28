@@ -16,7 +16,7 @@ export function useForm<T extends Record<string, unknown>>(
   const parseValue = (
     name: keyof T,
     value: string
-  ): string | number | boolean => {
+  ): string | number | boolean | File => {
     const type = fieldTypes?.[name];
 
     switch (type) {

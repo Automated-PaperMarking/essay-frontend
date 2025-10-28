@@ -10,7 +10,7 @@ const publicRoutes = [
   "/?state=reset-password",
 ];
 const apiService = axios.create({
-  baseURL: "apiv2",
+  baseURL: "http://localhost:8000/api",
 
   headers: {
     "Content-Type": "application/json",

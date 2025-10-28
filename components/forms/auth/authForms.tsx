@@ -66,6 +66,7 @@ const AuthForms = () => {
     const validUrlState = validStates.includes(urlState) ? urlState : "login";
     const urlEmail = searchParams.get("email") || "";
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setState(validUrlState);
     if (urlEmail) {
       setEmail(urlEmail);
