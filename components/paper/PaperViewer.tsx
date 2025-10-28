@@ -1,6 +1,7 @@
+'use client';
 import { PaperResponseDTO } from "@/types/PaperResponseDTO";
 import { QuestionResponseDTO } from "@/types/QuestionResponseDTO";
-import React from "react";
+import React, { useState } from "react";
 
 interface QuestionHierarchy {
   question: QuestionResponseDTO;
@@ -9,6 +10,8 @@ interface QuestionHierarchy {
 
 const PaperViewer = ({ paper }: { paper: PaperResponseDTO }) => {
   // Function to build hierarchical structure from flat questions array
+  const [selectedQuestion,setSelectedQuestion]=useState<QuestionResponseDTO|null>(null);
+
   const buildQuestionHierarchy = (
     questions: QuestionResponseDTO[]
   ): QuestionHierarchy[] => {
@@ -59,11 +62,11 @@ const PaperViewer = ({ paper }: { paper: PaperResponseDTO }) => {
 
     return (
       <div
-        className={`question-container ${
+        className={`question-container   ${
           depth > 0 ? "ml-6 border-l-2 border-gray-200 pl-4" : ""
         }`}
       >
-        <div className="question-header bg-gray-50 p-4 rounded-t-lg border">
+        <div className="question-header bg-gray-50 p-4 rounded-t-lg border ">
           <div className="flex justify-between items-start">
             <div>
               <h3 className="font-semibold text-lg text-gray-800">
@@ -73,23 +76,23 @@ const PaperViewer = ({ paper }: { paper: PaperResponseDTO }) => {
                 ID: {question.questionId}
               </span>
             </div>
-            <div className="text-right">
+           {question.studentAnswer !== "" && <div className="text-right">
               <div className="text-sm text-gray-600">
                 Marks: {question.allocatedMarks}
               </div>
-            </div>
+            </div>}
           </div>
         </div>
 
-        <div className="question-content border-x border-b rounded-b-lg">
+        <div className="question-content border-x border-b rounded-b-lg  ">
           {hasAnswer ? (
             <div className="p-4">
               <div className="mb-4">
-                <h4 className="font-medium text-gray-700 mb-2">
+                <h4 className="font-medium text-gray-700 mb-2 text-left">
                   Student Answer:
                 </h4>
                 <div className="bg-gray-50 p-3 rounded border">
-                  <pre className="whitespace-pre-wrap font-mono text-sm text-gray-800 overflow-x-auto">
+                  <pre className="whitespace-pre-wrap font-mono text-sm text-gray-800 overflow-x-auto text-left">
                     {question.studentAnswer}
                   </pre>
                 </div>
@@ -97,25 +100,18 @@ const PaperViewer = ({ paper }: { paper: PaperResponseDTO }) => {
 
               {question.graderComments && (
                 <div className="mt-4">
-                  <h4 className="font-medium text-gray-700 mb-2">
+                  <h4 className="font-medium text-gray-700 mb-2 text-left">
                     Grader Comments:
                   </h4>
-                  <div className="bg-yellow-50 p-3 rounded border border-yellow-200">
-                    <p className="text-gray-700">{question.graderComments}</p>
+                  <div className="bg-green-50 p-3 rounded border border-green-200">
+                    <p className="text-gray-700 text-left">{question.graderComments}</p>
                   </div>
                 </div>
               )}
             </div>
           ) : (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-b-lg">
-              <p className="text-red-600 font-medium">No answer provided</p>
-              {question.graderComments && (
-                <div className="mt-2">
-                  <p className="text-sm text-gray-600">
-                    {question.graderComments}
-                  </p>
-                </div>
-              )}
+            <div className="g">
+             
             </div>
           )}
         </div>
@@ -124,7 +120,7 @@ const PaperViewer = ({ paper }: { paper: PaperResponseDTO }) => {
         {children.length > 0 && (
           <div className="mt-4">
             {children.map((childNode) => (
-              <div key={childNode.question.id} className="mb-4">
+              <div key={childNode.question.id} onClick={() => setSelectedQuestion(childNode.question)} className="mb-4  hover:scale-[1.01] cursor-pointer transition-transform">
                 <QuestionRenderer questionNode={childNode} depth={depth + 1} />
               </div>
             ))}
@@ -137,7 +133,7 @@ const PaperViewer = ({ paper }: { paper: PaperResponseDTO }) => {
   const questionHierarchy = buildQuestionHierarchy(paper.questions);
 
   return (
-    <div className="paper-viewer max-w-4xl mx-auto p-6">
+    <div className="paper-viewer mx-auto p-6">
       {/* Paper Header */}
       <div className="paper-header bg-white shadow-sm border rounded-lg p-6 mb-6">
         <div className="flex justify-between items-start">

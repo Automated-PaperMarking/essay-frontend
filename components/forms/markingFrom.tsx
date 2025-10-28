@@ -137,7 +137,8 @@ const MarkingForm: React.FC<MarkingFormProps> = ({ setMarkingProcess }) => {
       <button
         type="submit"
         disabled={loading}
-        className="flex cursor-pointer items-center justify-center gap-2 my-2 px-4 py-2 rounded-sm text-white text-base transition bg-primary hover:bg-secondary disabled:opacity-60 disabled:cursor-not-allowed w-full"
+        className="flex cursor-pointer items-center justify-center gap-2 my-2 px-4 py-2 rounded-sm text-white text-base transition
+        bg-primary hover:bg-secondary disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {loading ? "Processing..." : "Submit for Marking"}
       </button>
