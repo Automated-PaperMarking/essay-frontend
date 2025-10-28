@@ -1,26 +1,348 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --primary: 214 69% 35%;
+  --secondary: 201 88% 48%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+
+  --primary-foreground: 210 40% 98%;
+
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+
+  --accent: 201 88% 48%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+
+  --radius: 0.5rem;
+
+  --sidebar-background: 0 0% 98%;
+
+  --sidebar-foreground: 240 5.3% 26.1%;
+
+  --sidebar-primary: 240 5.9% 10%;
+
+  --sidebar-primary-foreground: 0 0% 98%;
+
+  --sidebar-accent: 240 4.8% 95.9%;
+
+  --sidebar-accent-foreground: 240 5.9% 10%;
+
+  --sidebar-border: 220 13% 91%;
+
+  --sidebar-ring: 217.2 91.2% 59.8%;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #0d1521;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary: #000000;
+  --color-primary-foreground: #f6fafd;
+
+  --color-secondary: #454545;
+  --color-secondary-foreground: #0d1521;
+
+  --color-accent: #0ba1e7;
+  --color-accent-foreground: #0d1521;
+
+  --color-muted: #e9f2f9;
+  --color-muted-foreground: #708090;
+
+  --color-destructive: #f04444;
+  --color-destructive-foreground: #f6fafd;
+
+  --color-border: #d8e1ea;
+  --color-input: #d8e1ea;
+  --color-ring: #0d1521;
+
+  --color-sidebar-background: #fafafa;
+  --color-sidebar-foreground: #434343;
+  --color-sidebar-primary: #1a1a1a;
+  --color-sidebar-primary-foreground: #fafafa;
+  --color-sidebar-accent: #f4f4f4;
+  --color-sidebar-accent-foreground: #1a1a1a;
+  --color-sidebar-border: #e5ebf0;
+  --color-sidebar-ring: #3b82f6;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-lora), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-weight: 300;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-playfair), "Georgia", serif;
+}
+
+.font-sans {
+  font-family: var(--font-lora), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+.font-serif {
+  font-family: var(--font-playfair), "Georgia", serif;
+}
+
+.font-display {
+  font-family: var(--font-bokor), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-pacifico), "Pacifico", cursive;
+}
+.ql-editor strong {
+  font-weight: bold;
+}
+/* In your global CSS or a module */
+.bg-pos-mobile {
+  background-position: center center;
+}
+@media (min-width: 768px) {
+  .bg-pos-md {
+    background-position: -420px -500px; /* example */
+  }
+}
+@media (min-width: 1024px) {
+  .bg-pos-lg {
+    background-position: -420px -500px; /* example */
+  }
+}
+.loader {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  position: relative;
+}
+.loader::after,
+.loader::before {
+  content: "";
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  border: 2px solid #000000;
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation: rotationBreak 3s ease-in-out infinite alternate;
+}
+.loader::after {
+  border-color: #ff0a0a;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes rotationBreak {
+  0% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  75% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 380px) and (min-width: 300px) {
+  .wedding-card {
+    max-width: 95% !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    gap: 0.25rem !important;
+    min-height: 5rem !important;
+  }
+
+  .wedding-card h1 {
+    font-size: 0.9rem !important;
+  }
+
+  .wedding-card p {
+    font-size: 0.7rem !important;
+  }
+}
+
+@media (max-width: 380px) and (min-width: 300px) {
+  .portfoliobtn-card {
+    font-size: 0.7rem !important;
+    width: 100px !important;
+  }
+}
+
+/* xsm: ≤354px */
+@media (max-width: 380px) {
+  .xsm\:h1-text {
+    font-size: 2rem !important;
+  }
+  .xsm\:h2-text {
+    font-size: 1.2rem !important;
+  }
+  .xsm\:h3-text {
+    font-size: 1rem !important;
+  }
+  .xsm\:h5-text {
+    font-size: 0.7rem !important;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  .ios-bg {
+    background-attachment: scroll !important;
+  }
+}
+
+/* TipTap Editor Styles */
+.ProseMirror {
+  outline: none;
+}
+
+.ProseMirror p {
+  margin: 0.75em 0;
+}
+
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3 {
+  margin: 1em 0 0.5em 0;
+  font-weight: bold;
+}
+
+.ProseMirror h1 {
+  font-size: 1.5em;
+}
+
+.ProseMirror h2 {
+  font-size: 1.3em;
+}
+
+.ProseMirror h3 {
+  font-size: 1.1em;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  margin: 0.75em 0;
+  padding-left: 1.5em;
+}
+
+.ProseMirror li {
+  margin: 0.25em 0;
+}
+
+.ProseMirror strong {
+  font-weight: bold;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+.ProseMirror u {
+  text-decoration: underline;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  pointer-events: none;
+  height: 0;
+  color: #adb5bd;
+}
+
+/* Rich Text Editor Styles */
+.rich-text-editor [contenteditable] span[style*="font-size"],
+.rich-text-preview span[style*="font-size"] {
+  font-size: revert !important;
+}
+
+.rich-text-editor [contenteditable] span[style*="color"],
+.rich-text-preview span[style*="color"] {
+  color: revert !important;
+}
+
+.rich-text-editor [contenteditable] *[style*="text-align"],
+.rich-text-preview *[style*="text-align"] {
+  text-align: revert !important;
+}
+
+/* Ensure lists display properly in editor */
+.rich-text-editor [contenteditable] ul {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  margin-left: 0 !important;
+  padding-left: 40px !important;
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
+}
+
+.rich-text-editor [contenteditable] ol {
+  list-style-type: decimal !important;
+  list-style-position: outside !important;
+  margin-left: 0 !important;
+  padding-left: 40px !important;
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
+}
+
+.rich-text-editor [contenteditable] li {
+  display: list-item !important;
+  list-style: inherit !important;
+  margin-bottom: 8px !important;
+  padding-left: 0 !important;
+}
+
+/* Ensure preview lists also display properly */
+.rich-text-preview ul {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  margin-left: 0 !important;
+  padding-left: 40px !important;
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
+}
+
+.rich-text-preview ol {
+  list-style-type: decimal !important;
+  list-style-position: outside !important;
+  margin-left: 0 !important;
+  padding-left: 40px !important;
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
+}
+
+.rich-text-preview li {
+  display: list-item !important;
+  list-style: inherit !important;
+  margin-bottom: 8px !important;
+  padding-left: 0 !important;
 }
