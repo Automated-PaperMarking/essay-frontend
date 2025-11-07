@@ -1,13 +1,17 @@
 "use client";
 import ProjectForm from "@/components/forms/projectForm";
 import Dialog from "@/components/ui/dialog";
+import Loading from "@/components/ui/loading";
 import StaticButton from "@/components/ui/staticButton";
 import { DataTableSearch } from "@/components/ui/table/DataTableSearch";
+import { useProjectContext } from "@/contexts/projectContext";
 import { useDialog } from "@/hooks/useDialog";
 import { useGetAllProjects } from "@/hooks/useProject";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { ProjectResponseDTO } from "@/types/ProjectResponseDTO";
 import { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
 const ProjectPage = () => {
@@ -21,6 +25,8 @@ const ProjectPage = () => {
   const sortOrder = useMemo(() => getParam("order") || "asc", [getParam]);
 
   const projectFormDialog = useDialog();
+  const router = useRouter();
+  const { updateProjectData } = useProjectContext();
 
   const [selectedProject, setSelectedProject] =
     useState<ProjectResponseDTO | null>(null);
@@ -81,7 +87,7 @@ const ProjectPage = () => {
       accessorKey: "projectName",
       header: "Name",
       cell: (info) => info.getValue(),
-      size: 1000,
+      size: 300,
     },
     {
       accessorKey: "createdAt",
@@ -90,8 +96,8 @@ const ProjectPage = () => {
       size: 200,
     },
     {
-      accessorKey: "updateAt",
-      header: "Update At",
+      accessorKey: "updatedAt",
+      header: "Updated At",
       cell: (info) => new Date(info.getValue() as string).toLocaleString(),
       size: 200,
     },
@@ -117,6 +123,17 @@ const ProjectPage = () => {
           >
             Delete
           </StaticButton>
+          <button
+            className="flex cursor-pointer items-center justify-center gap-2 my-2 px-4 py-2 rounded-md text-white font-medium transition
+        bg-green-500 hover:bg-green-600 disabled:opacity-60 disabled:cursor-not-allowed"
+            onClick={() => {
+              setSelectedProject(row.original);
+              updateProjectData(row.original);
+              router.push(`/projects/${row.original.id}`);
+            }}
+          >
+            Select
+          </button>
         </div>
       ),
     },
@@ -124,12 +141,17 @@ const ProjectPage = () => {
 
   return (
     <div className="p-4">
+      {isLoading && <Loading />}
+
       <Dialog
         isOpen={projectFormDialog.isOpen}
         onClose={projectFormDialog.close}
         title={selectedProject ? "Edit" : "Create"}
       >
-        <ProjectForm selectedProject={selectedProject} closeDialog={projectFormDialog.close} />
+        <ProjectForm
+          selectedProject={selectedProject}
+          closeDialog={projectFormDialog.close}
+        />
       </Dialog>
       <DataTableSearch
         columns={columns}

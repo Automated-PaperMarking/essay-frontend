@@ -3,4 +3,5 @@ export interface ProjectResponseDTO {
   projectName: string;
   createdAt: string;
   updatedAt: string;
+  markingId: string | null;
 }

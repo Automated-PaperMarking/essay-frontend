@@ -22,6 +22,14 @@ export const useGetPaperById = (id: string) => {
   });
 };
 
+//get Papers by project id
+export const useGetPapersByProjectId = (projectId: string) => {
+  return useQuery({
+    queryKey: paperQueryKeys.byStudent(projectId),
+    queryFn: () => paperApi.getPapersByProjectId(projectId),
+  });
+};
+
 // Hook for prefetching a paper (useful for performance optimization)
 export const usePrefetchPaper = () => {
   const queryClient = useQueryClient();

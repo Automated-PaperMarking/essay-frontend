@@ -4,6 +4,8 @@ import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { ToastContainer } from "react-toastify";
 import { QueryProvider } from "@/components/providers/QueryProvider";
+import { ProjectProvider } from "@/contexts/projectContext";
+import Header from "@/components/ui/header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,19 +34,22 @@ export default function RootLayout({
       >
         <QueryProvider>
           <AuthProvider>
-            <ToastContainer
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
-            {children}
+            <ProjectProvider>
+              <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+              />
+              <Header />
+              {children}
+            </ProjectProvider>
           </AuthProvider>
         </QueryProvider>
       </body>

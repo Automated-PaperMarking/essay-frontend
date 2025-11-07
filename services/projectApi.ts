@@ -69,4 +69,10 @@ export const projectApi = {
     // Otherwise return as paginated response
     return responseData as PaginatedResponse<ProjectResponseDTO>;
   },
+
+  //get by id
+  getProjectById: async (id: string): Promise<ProjectResponseDTO> => {
+    const result: ApiResponseDTO = await apiService.get(`/projects/${id}`);
+    return result.data as ProjectResponseDTO;
+  },
 };
