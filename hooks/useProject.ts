@@ -39,5 +39,6 @@ export const useGetProjectById = (id: string) => {
     queryFn: () => projectApi.getProjectById(id),
     staleTime: 5 * 60 * 1000,
     retry: 2,
+  
   });
 };

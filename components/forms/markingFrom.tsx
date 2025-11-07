@@ -6,25 +6,26 @@ import {
   useExtractStudentAnswerSheet,
 } from "@/hooks/useOcr";
 import { FileIcon, Upload } from "lucide-react";
-import { MarkingProcess } from "@/types/MarkingProcess";
-import { PaperResponseDTO } from "@/types/PaperResponseDTO";
-import { MarkingResponeDTO } from "@/types/MarkingResponeDTO";
 import { useGetPapersByProjectId } from "@/hooks/usePaper";
 import { useGetProjectById } from "@/hooks/useProject";
+import StaticButton from "../ui/staticButton";
+import Link from "next/link";
+import MutationButton from "../ui/mutationButton";
+import { useDeleteMarkingById } from "@/hooks/useMarking";
+import { useProjectContext } from "@/contexts/projectContext";
+import Loading from "../ui/loading";
 
 interface MarkingFormProps {
-  setMarkingProcess?: (markingProcess: MarkingProcess) => void;
   projectId?: string;
 }
 
-const MarkingForm: React.FC<MarkingFormProps> = ({
-  setMarkingProcess,
-  projectId,
-}) => {
+const MarkingForm: React.FC<MarkingFormProps> = ({ projectId }) => {
   const extractStudentAnswerSheet = useExtractStudentAnswerSheet();
   const extractMarkingScheme = useExtractMarkingScheme();
   const getPapersByProjectId = useGetPapersByProjectId(projectId || "");
   const getProjectById = useGetProjectById(projectId || "");
+  const deleteMarking = useDeleteMarkingById();
+  const { updateProjectData } = useProjectContext();
 
   const [markingScheme, setMarkingScheme] = useState<File | null>(null);
   const [studentAnswerSheet, setStudentAnswerSheet] = useState<File | null>(
@@ -34,10 +35,8 @@ const MarkingForm: React.FC<MarkingFormProps> = ({
   const [markingSchemeUploaded, setMarkingSchemeUploaded] = useState(false);
   const [studentAnswerSheetUploaded, setStudentAnswerSheetUploaded] =
     useState(false);
-  const [markingData, setMarkingData] = useState<MarkingResponeDTO | null>(
-    null
-  );
-  const [paperData, setPaperData] = useState<PaperResponseDTO | null>(null);
+
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -49,8 +48,10 @@ const MarkingForm: React.FC<MarkingFormProps> = ({
   };
 
   const handleUploadMarkingScheme = async () => {
+    setLoading(true);
     if (!markingScheme) {
       toast.error("Please select a marking scheme file first.");
+      setLoading(false);
       return;
     }
 
@@ -63,20 +64,28 @@ const MarkingForm: React.FC<MarkingFormProps> = ({
       );
 
       if (markingSchemeResponse?.data) {
-        const marking = markingSchemeResponse.data as MarkingResponeDTO;
-        setMarkingData(marking);
+        // Refetch the project data and wait for it to complete
+        const { data: updatedProject } = await getProjectById.refetch();
+        if (updatedProject) {
+          updateProjectData(updatedProject);
+        }
+        setMarkingScheme(null);
         setMarkingSchemeUploaded(true);
         toast.success("Marking scheme uploaded successfully!");
       }
     } catch (error) {
       toast.error("Failed to upload marking scheme. Please try again.");
       console.error("Marking scheme upload error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleUploadStudentAnswerSheet = async () => {
+    setLoading(true);
     if (!studentAnswerSheet) {
       toast.error("Please select a student answer sheet file first.");
+      setLoading(false);
       return;
     }
 
@@ -95,42 +104,38 @@ const MarkingForm: React.FC<MarkingFormProps> = ({
       );
 
       if (studentAnswerResponse?.data) {
-        const paper = studentAnswerResponse.data as PaperResponseDTO;
-        setPaperData(paper);
         setStudentAnswerSheetUploaded(true);
         toast.success("Student answer sheet uploaded successfully!");
       }
     } catch (error) {
       toast.error("Failed to upload student answer sheet. Please try again.");
       console.error("Student answer sheet upload error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!markingSchemeUploaded || !studentAnswerSheetUploaded) {
-      toast.error("Please upload both files before submitting.");
-      return;
-    }
-
-    if (markingData && paperData) {
-      const markingProcess: MarkingProcess = {
-        status: "extracted",
-        paperId: paperData.id,
-        markingId: markingData.id,
-        paper: paperData,
-      };
-
-      setMarkingProcess?.(markingProcess);
-      toast.success("Files processed successfully!");
-    } else {
-      toast.error("Missing data. Please re-upload the files.");
+  const handleDeleteMarking = async () => {
+    setLoading(true);
+    try {
+      await deleteMarking.mutateAsync(getProjectById.data?.markingId ?? "");
+      // Refetch the project data and wait for it to complete
+      const { data: updatedProject } = await getProjectById.refetch();
+      if (updatedProject) {
+        updateProjectData(updatedProject);
+      }
+      toast.success("Marking deleted successfully!");
+    } catch (error) {
+      toast.error("Failed to delete marking. Please try again.");
+      console.error("Delete marking error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full  mx-auto mt-10 ">
+    <form className="w-full  mx-auto mt-10 ">
+      {loading && <Loading />}
       <div className="space-y-6 grid grid-cols-2 gap-4">
         {/* Marking Scheme Upload */}
         {!getProjectById.data?.markingId ? (
@@ -178,7 +183,19 @@ const MarkingForm: React.FC<MarkingFormProps> = ({
                 : "Upload Marking Scheme"}
             </button>
           </div>
-        ) : <center className="">Marking is Already Uploaded</center>}
+        ) : (
+          <center className="">
+            <h1>Marking is Already Uploaded</h1>
+            <Link href={`/projects/${projectId}/marking`}>
+              <StaticButton onClick={() => {}}>
+                View Marking Scheme
+              </StaticButton>
+            </Link>
+            <MutationButton onClick={handleDeleteMarking}>
+              Delete Marking
+            </MutationButton>
+          </center>
+        )}
 
         {/* Student Answer Sheet Upload */}
         <div className="flex flex-col mb-6">
