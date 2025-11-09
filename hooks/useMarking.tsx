@@ -1,6 +1,5 @@
 import { markingApi } from "@/services/markingApi";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 
 export const useGetMarkingById = (id: string) => {
   return useQuery({
@@ -14,9 +13,6 @@ export const useGetMarkingById = (id: string) => {
 
 export const useDeleteMarkingById = () => {
   return useMutation({
-    mutationFn: (id:string) => markingApi.deleteMarking(id),
-    onSuccess: () => {
-      toast.success("Marking deleted successfully!");
-    },
+    mutationFn: (id: string) => markingApi.deleteMarking(id),
   });
 };

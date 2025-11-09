@@ -1,19 +1,33 @@
 "use client";
 import MarkingForm from "@/components/forms/markingFrom";
+import AlertDialog from "@/components/ui/alertDailog";
 import Loading from "@/components/ui/loading";
+import StaticButton from "@/components/ui/staticButton";
 import { DataTable } from "@/components/ui/table";
-import { useGetPapersByProjectId } from "@/hooks/usePaper";
+import { useDialog } from "@/hooks/useDialog";
+import { useDeletePaperById, useGetPapersByProjectId } from "@/hooks/usePaper";
 import { useGetProjectById } from "@/hooks/useProject";
 import { PaperResponseDTO } from "@/types/PaperResponseDTO";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { use } from "react";
+import { use, useState } from "react";
 
 const ProjectView = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
 
-  const { data, isLoading, isError, error } = useGetPapersByProjectId(id);
-  const getProjectById = useGetProjectById(id || "");
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    refetch: reloadPapers,
+  } = useGetPapersByProjectId(id);
+  const deletePaper = useDeletePaperById();
+
+  const [selectedPaper, setSelectedPaper] = useState<PaperResponseDTO | null>(
+    null
+  );
+  const deletePaperDialog = useDialog();
 
   const columns: ColumnDef<PaperResponseDTO>[] = [
     {
@@ -60,6 +74,16 @@ const ProjectView = ({ params }: { params: Promise<{ id: string }> }) => {
             >
               View
             </Link>
+            <StaticButton
+              onClick={function (): void {
+                setSelectedPaper(row.original);
+                deletePaperDialog.open();
+              }}
+              className="flex cursor-pointer items-center justify-center gap-2 my-2 px-4 py-2 rounded-md text-white font-medium transition
+        bg-red-500 hover:bg-red-600 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              Delete
+            </StaticButton>
           </div>
         );
       },
@@ -68,8 +92,25 @@ const ProjectView = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className="p-4">
+      <AlertDialog
+        isOpen={deletePaperDialog.isOpen}
+        onClose={function (): void {
+          deletePaperDialog.close();
+        }}
+        onConfirm={function (): void {
+          if (selectedPaper) {
+            deletePaper.mutate(selectedPaper.id, {
+              onSuccess: () => {
+                deletePaperDialog.close();
+                reloadPapers();
+                setSelectedPaper(null);
+              },
+            });
+          }
+        }}
+      />
       <MarkingForm projectId={id} />
-      {isLoading && <Loading />}
+      {(isLoading || deletePaper.isPending) && <Loading />}
       {isError && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
           <p className="font-bold">Error loading papers</p>

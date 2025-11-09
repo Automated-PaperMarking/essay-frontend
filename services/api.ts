@@ -95,6 +95,8 @@ apiService.interceptors.response.use(
       }
     }
 
+    toast.error(errorMessage);
+
     return Promise.reject(errorMessage);
   }
 );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { paperApi } from "@/services/papeApi";
 import { PaperResponseDTO } from "@/types/PaperResponseDTO";
 
@@ -41,7 +41,17 @@ export const usePrefetchPaper = () => {
       staleTime: 5 * 60 * 1000,
     });
   };
+
+
 };
+
+  //delete paper by id
+  export const useDeletePaperById = () => {
+    return useMutation({
+      mutationFn: (id: string) => paperApi.deletePaper(id),
+  
+    });
+  }
 
 // Hook to invalidate paper queries (useful after mutations)
 export const useInvalidatePaperQueries = () => {

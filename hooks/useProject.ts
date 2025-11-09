@@ -29,7 +29,6 @@ export const useGetAllProjects = (
     queryKey: ["projects", search, page, size, sort, sortOrder],
     queryFn: () =>
       projectApi.getAllProjects(search, page, size, sort, sortOrder),
-    staleTime: 5 * 60 * 1000,
     retry: 2,
   });
 };
@@ -37,7 +36,6 @@ export const useGetProjectById = (id: string) => {
   return useQuery({
     queryKey: ["project", id],
     queryFn: () => projectApi.getProjectById(id),
-    staleTime: 5 * 60 * 1000,
     retry: 2,
   
   });

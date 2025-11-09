@@ -115,22 +115,30 @@ const MarkingForm: React.FC<MarkingFormProps> = ({ projectId }) => {
     }
   };
 
-  const handleDeleteMarking = async () => {
-    setLoading(true);
-    try {
-      await deleteMarking.mutateAsync(getProjectById.data?.markingId ?? "");
-      // Refetch the project data and wait for it to complete
-      const { data: updatedProject } = await getProjectById.refetch();
-      if (updatedProject) {
-        updateProjectData(updatedProject);
-      }
-      toast.success("Marking deleted successfully!");
-    } catch (error) {
-      toast.error("Failed to delete marking. Please try again.");
-      console.error("Delete marking error:", error);
-    } finally {
-      setLoading(false);
+  const handleDeleteMarking = () => {
+    if (!getProjectById.data?.markingId) {
+      toast.error("No marking ID found.");
+      return;
     }
+
+    setLoading(true);
+    deleteMarking
+      .mutateAsync(getProjectById.data.markingId)
+      .then(async () => {
+        // Refetch the project data and wait for it to complete
+        const { data: updatedProject } = await getProjectById.refetch();
+        if (updatedProject) {
+          updateProjectData(updatedProject);
+        }
+        toast.success("Marking deleted successfully!");
+      })
+      .catch((error) => {
+        toast.error("Failed to delete marking. Please try again.");
+        console.error("Delete marking error:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (

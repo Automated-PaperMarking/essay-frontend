@@ -28,6 +28,7 @@ const MutationButton: React.FC<MutationButtonProps> = ({
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       disabled={isDisabled}
       className={
