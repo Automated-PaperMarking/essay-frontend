@@ -75,4 +75,17 @@ export const projectApi = {
     const result: ApiResponseDTO = await apiService.get(`/projects/${id}`);
     return result.data as ProjectResponseDTO;
   },
+
+  //update project
+  updateProject: async (
+    id: string,
+    projectName: string,
+    markingInstructions: string
+  ): Promise<void> => {
+    const result: ApiResponseDTO = await apiService.patch(`/projects/update`, {
+      id: id,
+      projectName: projectName,
+      markingInstructions: markingInstructions,
+    });
+  },
 };

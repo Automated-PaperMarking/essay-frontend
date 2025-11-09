@@ -1,5 +1,6 @@
 "use client";
-import ProjectForm from "@/components/forms/projectForm";
+import ProjectForm from "@/components/forms/createProjectForm";
+import UpdateProjectForm from "@/components/forms/updateProjectForm";
 import Dialog from "@/components/ui/dialog";
 import Loading from "@/components/ui/loading";
 import StaticButton from "@/components/ui/staticButton";
@@ -25,6 +26,7 @@ const ProjectPage = () => {
   const sortOrder = useMemo(() => getParam("order") || "asc", [getParam]);
 
   const projectFormDialog = useDialog();
+  const updateProjectFormDialog = useDialog();
   const router = useRouter();
   const { updateProjectData } = useProjectContext();
 
@@ -109,7 +111,7 @@ const ProjectPage = () => {
           <StaticButton
             onClick={function (): void {
               setSelectedProject(row.original);
-              projectFormDialog.open();
+              updateProjectFormDialog.open();
             }}
           >
             Edit
@@ -151,6 +153,17 @@ const ProjectPage = () => {
         <ProjectForm
           selectedProject={selectedProject}
           closeDialog={projectFormDialog.close}
+        />
+      </Dialog>
+      <Dialog
+        isOpen={updateProjectFormDialog.isOpen}
+        onClose={updateProjectFormDialog.close}
+        title={selectedProject ? "Edit Project" : "Create Project"}
+        width="xl"
+      >
+        <UpdateProjectForm
+          selectedProject={selectedProject!}
+          closeDialog={updateProjectFormDialog.close}
         />
       </Dialog>
       <DataTableSearch

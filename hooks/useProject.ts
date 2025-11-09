@@ -1,6 +1,5 @@
 import { projectApi } from "@/services/projectApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { on } from "events";
 import { toast } from "react-toastify";
 
 export const useCreateProject = () => {
@@ -14,6 +13,25 @@ export const useCreateProject = () => {
         // Invalidate and refetch projects list
         queryClient.invalidateQueries({ queryKey: ["projects"] });
       }
+    },
+  });
+};
+export const useUpdateProject = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      projectName,
+      markingInstructions,
+    }: {
+      id: string;
+      projectName: string;
+      markingInstructions: string;
+    }) => projectApi.updateProject(id, projectName, markingInstructions),
+    onSuccess: () => {
+      // Invalidate all project queries to trigger refetch
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
 };
@@ -37,6 +55,5 @@ export const useGetProjectById = (id: string) => {
     queryKey: ["project", id],
     queryFn: () => projectApi.getProjectById(id),
     retry: 2,
-  
   });
 };
