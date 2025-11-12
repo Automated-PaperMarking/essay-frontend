@@ -168,7 +168,7 @@ const ProjectPage = () => {
       </Dialog>
       <DataTableSearch
         columns={columns}
-        data={data?.content ?? []}
+        data={data?.data ?? []}
         totalPages={data?.totalPages ?? 1}
         currentPage={page}
         onPageChange={handlePageChange}
