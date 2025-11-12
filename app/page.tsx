@@ -61,7 +61,6 @@ export default function Home() {
         </h2>
         {markingProcess && <MarkingPogress markingProcess={markingProcess} />}
         {/* paper and marking input form */}
-        <MarkingForm setMarkingProcess={setMarkingProcess} />
         <MutationButton onClick={grade} loading={gradePaper.isPending}>
           Grade
         </MutationButton>

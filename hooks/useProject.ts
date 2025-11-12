@@ -29,9 +29,11 @@ export const useUpdateProject = () => {
       projectName: string;
       markingInstructions: string;
     }) => projectApi.updateProject(id, projectName, markingInstructions),
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       // Invalidate all project queries to trigger refetch
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      // Invalidate the specific project query to refetch updated data
+      queryClient.invalidateQueries({ queryKey: ["project", variables.id] });
     },
   });
 };
@@ -55,5 +57,6 @@ export const useGetProjectById = (id: string) => {
     queryKey: ["project", id],
     queryFn: () => projectApi.getProjectById(id),
     retry: 2,
+    enabled: id !== "",
   });
 };

@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
+import { createPortal } from "react-dom";
 
 interface DialogProps {
   isOpen: boolean;
@@ -28,9 +29,27 @@ const Dialog: React.FC<DialogProps> = ({
   showCloseButton = true,
   width = "md", // Default to "md"
 }) => {
+  // Manage body scroll when dialog opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    // Cleanup function to re-enable scroll
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
+
+  // Don't render the portal on the server
+  if (typeof window === "undefined") {
+    return null;
+  }
+
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -46,7 +65,6 @@ const Dialog: React.FC<DialogProps> = ({
             ✕
           </button>
         )}
-
         {title && (
           <h2 className="text-xl text-center font-semibold mb-2">{title}</h2>
         )}
@@ -55,7 +73,8 @@ const Dialog: React.FC<DialogProps> = ({
         )}
         {children}
       </motion.div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
