@@ -1,7 +1,11 @@
-'use client';
+"use client";
 import { PaperResponseDTO } from "@/types/PaperResponseDTO";
 import { QuestionResponseDTO } from "@/types/QuestionResponseDTO";
 import React, { useState } from "react";
+import StaticButton from "../ui/staticButton";
+import { useDialog } from "@/hooks/useDialog";
+import Dialog from "../ui/dialog";
+import UpdateQuestionMarks from "../forms/updateQuestionForm";
 
 interface QuestionHierarchy {
   question: QuestionResponseDTO;
@@ -10,7 +14,10 @@ interface QuestionHierarchy {
 
 const PaperViewer = ({ paper }: { paper: PaperResponseDTO }) => {
   // Function to build hierarchical structure from flat questions array
-  const [selectedQuestion,setSelectedQuestion]=useState<QuestionResponseDTO|null>(null);
+  const [selectedQuestion, setSelectedQuestion] =
+    useState<QuestionResponseDTO | null>(null);
+
+  const updateQuestionDialog = useDialog();
 
   const buildQuestionHierarchy = (
     questions: QuestionResponseDTO[]
@@ -76,11 +83,21 @@ const PaperViewer = ({ paper }: { paper: PaperResponseDTO }) => {
                 ID: {question.questionId}
               </span>
             </div>
-           {question.studentAnswer !== "" && <div className="text-right">
-              <div className="text-sm text-gray-600">
-                Marks: {question.allocatedMarks}
+            {question.studentAnswer !== "" && (
+              <div className="text-right">
+                <div className="text-sm text-gray-600">
+                  Marks: {question.allocatedMarks}
+                </div>
+                <StaticButton
+                  onClick={() => {
+                    setSelectedQuestion(question);
+                    updateQuestionDialog.open();
+                  }}
+                >
+                  Update Marks Manually
+                </StaticButton>
               </div>
-            </div>}
+            )}
           </div>
         </div>
 
@@ -104,15 +121,15 @@ const PaperViewer = ({ paper }: { paper: PaperResponseDTO }) => {
                     Grader Comments:
                   </h4>
                   <div className="bg-green-50 p-3 rounded border border-green-200">
-                    <p className="text-gray-700 text-left">{question.graderComments}</p>
+                    <p className="text-gray-700 text-left">
+                      {question.graderComments}
+                    </p>
                   </div>
                 </div>
               )}
             </div>
           ) : (
-            <div className="g">
-             
-            </div>
+            <div className="g"></div>
           )}
         </div>
 
@@ -120,7 +137,11 @@ const PaperViewer = ({ paper }: { paper: PaperResponseDTO }) => {
         {children.length > 0 && (
           <div className="mt-4">
             {children.map((childNode) => (
-              <div key={childNode.question.id} onClick={() => setSelectedQuestion(childNode.question)} className="mb-4  hover:scale-[1.01] cursor-pointer transition-transform">
+              <div
+                key={childNode.question.id}
+                onClick={() => setSelectedQuestion(childNode.question)}
+                className="mb-4  hover:scale-[1.01] cursor-pointer transition-transform"
+              >
                 <QuestionRenderer questionNode={childNode} depth={depth + 1} />
               </div>
             ))}
@@ -134,6 +155,15 @@ const PaperViewer = ({ paper }: { paper: PaperResponseDTO }) => {
 
   return (
     <div className="paper-viewer mx-auto p-6">
+      <Dialog
+        isOpen={updateQuestionDialog.isOpen}
+        onClose={updateQuestionDialog.close}
+      >
+        <UpdateQuestionMarks
+          selectedQuestion={selectedQuestion!}
+          closeDialog={updateQuestionDialog.close}
+        />
+      </Dialog>
       {/* Paper Header */}
       <div className="paper-header bg-white shadow-sm border rounded-lg p-6 mb-6">
         <div className="flex justify-between items-start">

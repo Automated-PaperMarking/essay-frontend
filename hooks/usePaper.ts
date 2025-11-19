@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { paperApi } from "@/services/papeApi";
 import { PaperResponseDTO } from "@/types/PaperResponseDTO";
+import { UpdateQuestionMarksDTO } from "@/types/UpdateQuestionMarksDTO";
 
 // Query keys for paper-related queries
 export const paperQueryKeys = {
@@ -41,17 +42,29 @@ export const usePrefetchPaper = () => {
       staleTime: 5 * 60 * 1000,
     });
   };
-
-
 };
 
-  //delete paper by id
-  export const useDeletePaperById = () => {
-    return useMutation({
-      mutationFn: (id: string) => paperApi.deletePaper(id),
-  
-    });
-  }
+//delete paper by id
+export const useDeletePaperById = () => {
+  return useMutation({
+    mutationFn: (id: string) => paperApi.deletePaper(id),
+  });
+};
+//update question marks
+export const useUpdateQuestionMarks = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UpdateQuestionMarksDTO) =>
+      paperApi.updateQuestionsMarks(data),
+    onSuccess: (_, data) => {
+      // Invalidate the specific paper query to trigger a refetch
+      queryClient.invalidateQueries({
+        queryKey: paperQueryKeys.paper(data.paperId),
+      });
+    },
+  });
+};
 
 // Hook to invalidate paper queries (useful after mutations)
 export const useInvalidatePaperQueries = () => {
@@ -62,6 +75,10 @@ export const useInvalidatePaperQueries = () => {
       queryClient.invalidateQueries({ queryKey: paperQueryKeys.all }),
     invalidatePaper: (id: string) =>
       queryClient.invalidateQueries({ queryKey: paperQueryKeys.paper(id) }),
+    invalidatePaperByUpdatingQuestion: (data: UpdateQuestionMarksDTO) =>
+      queryClient.invalidateQueries({
+        queryKey: paperQueryKeys.paper(data.paperId),
+      }),
     invalidateStudentPapers: (studentId: string) =>
       queryClient.invalidateQueries({
         queryKey: paperQueryKeys.byStudent(studentId),

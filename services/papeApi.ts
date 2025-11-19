@@ -1,6 +1,8 @@
 import { PaperResponseDTO } from "@/types/PaperResponseDTO";
 import apiService from "./api";
 import { ApiResponseDTO } from "@/types/ApiResponeDTO";
+import { UpdateQuestionMarksDTO } from "@/types/UpdateQuestionMarksDTO";
+import { all } from "axios";
 
 export const paperApi = {
   //get paper
@@ -21,6 +23,14 @@ export const paperApi = {
     );
 
     return response.data as PaperResponseDTO[];
+  },
+
+  updateQuestionsMarks: async (data: UpdateQuestionMarksDTO): Promise<void> => {
+    await apiService.patch("questions", {
+      id: data.id,
+      allocatedMarks: data.allocatedMarks,
+      comments: data.comments,
+    });
   },
 
   deletePaper: async (paperId: string): Promise<void> => {
