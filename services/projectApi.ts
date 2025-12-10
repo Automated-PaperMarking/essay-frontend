@@ -2,8 +2,8 @@ import { ApiResponseDTO } from "@/types/ApiResponeDTO";
 import apiService from "./api";
 import { ProjectResponseDTO } from "@/types/ProjectResponseDTO";
 import { PageResponseDTO } from "@/types/PageResponeDTO";
-
-
+import axios from "axios";
+import Cookies from "js-cookie";
 
 export const projectApi = {
   createProject: async (name: string): Promise<ApiResponseDTO> => {
@@ -30,14 +30,11 @@ export const projectApi = {
 
     if (!responseData) {
       return {
-       
-        data:[],
-        totalPages:0,
-        page:0
+        data: [],
+        totalPages: 0,
+        page: 0,
       };
     }
-
-   
 
     // Otherwise return as paginated response
     return responseData as PageResponseDTO<ProjectResponseDTO>;
@@ -60,5 +57,27 @@ export const projectApi = {
       projectName: projectName,
       markingInstructions: markingInstructions,
     });
+  },
+
+  //generate report
+  generateReport: async (projectId: string): Promise<Blob> => {
+    const token = Cookies.get("accessToken");
+
+    const response = await axios({
+      method: "GET",
+      url: `http://localhost:8000/api/paper/report/${projectId}`,
+      responseType: "arraybuffer",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/octet-stream",
+      },
+    });
+
+    // Create blob from arraybuffer with correct MIME type for .xls files
+    const blob = new Blob([response.data], {
+      type: "application/vnd.ms-excel",
+    });
+
+    return blob;
   },
 };

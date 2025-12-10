@@ -80,8 +80,10 @@ export function DataTable<TData>({
     <div className="w-full">
       {/* Search */}
       <div className="mb-4 flex justify-between items-center gap-4">
-        {buttons &&
-          buttons.map((button, index) => <div key={index}>{button}</div>)}
+        <div className="mb-4 flex justify-between items-center gap-4">
+          {buttons &&
+            buttons.map((button, index) => <div key={index}>{button}</div>)}
+        </div>
         <input
           type="text"
           placeholder="Search..."

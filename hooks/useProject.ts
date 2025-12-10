@@ -60,3 +60,25 @@ export const useGetProjectById = (id: string) => {
     enabled: id !== "",
   });
 };
+
+export const useGenerateReport = () => {
+  return useMutation({
+    mutationFn: (projectId: string) => projectApi.generateReport(projectId),
+    onSuccess: (blob, projectId) => {
+      // Create a download link directly with the received blob
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `paper_results.xls`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success("Report generated successfully!");
+    },
+    onError: (error) => {
+      console.error("Error generating report:", error);
+      toast.error("Failed to generate report");
+    },
+  });
+};

@@ -8,6 +8,7 @@ import { DataTable } from "@/components/ui/table";
 import { useDialog } from "@/hooks/useDialog";
 import { useDeletePaperById, useGetPapersByProjectId } from "@/hooks/usePaper";
 import { useGradeAll } from "@/hooks/userGrade";
+import { useGenerateReport } from "@/hooks/useProject";
 import { PaperResponseDTO } from "@/types/PaperResponseDTO";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
@@ -25,6 +26,7 @@ const ProjectView = ({ params }: { params: Promise<{ id: string }> }) => {
   } = useGetPapersByProjectId(id);
   const deletePaper = useDeletePaperById();
   const gradeAllPapers = useGradeAll();
+  const generateReport = useGenerateReport();
 
   const [selectedPaper, setSelectedPaper] = useState<PaperResponseDTO | null>(
     null
@@ -112,7 +114,10 @@ const ProjectView = ({ params }: { params: Promise<{ id: string }> }) => {
         }}
       />
       <MarkingForm projectId={id} />
-      {(isLoading || deletePaper.isPending || gradeAllPapers.isPending) && <Loading />}
+      {(isLoading ||
+        deletePaper.isPending ||
+        gradeAllPapers.isPending ||
+        generateReport.isPending) && <Loading />}
       {isError && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
           <p className="font-bold">Error loading papers</p>
@@ -125,15 +130,36 @@ const ProjectView = ({ params }: { params: Promise<{ id: string }> }) => {
         </div>
       )}
       <h1 className="py-3 font-bold text-2xl">Stuents Answer Sheets</h1>
-      <MutationButton onClick={()=>{
-        
-        gradeAllPapers.mutate({ projectId: id },{
-          onSuccess:()=>{
-            reloadPapers();
-          }
-        });
-      } } >GradeAll</MutationButton>
-      <DataTable columns={columns} data={data ?? []} />
+
+      <DataTable
+        columns={columns}
+        data={data ?? []}
+        buttons={[
+          <MutationButton
+            key={"gradeall"}
+            onClick={() => {
+              gradeAllPapers.mutate(
+                { projectId: id },
+                {
+                  onSuccess: () => {
+                    reloadPapers();
+                  },
+                }
+              );
+            }}
+          >
+            GradeAll
+          </MutationButton>,
+          <MutationButton
+            key={"generate"}
+            onClick={() => {
+              generateReport.mutate(id);
+            }}
+          >
+            Generate Result Report
+          </MutationButton>,
+        ]}
+      />
     </div>
   );
 };
