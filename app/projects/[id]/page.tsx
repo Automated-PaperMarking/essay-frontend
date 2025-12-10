@@ -2,11 +2,12 @@
 import MarkingForm from "@/components/forms/markingFrom";
 import AlertDialog from "@/components/ui/alertDailog";
 import Loading from "@/components/ui/loading";
+import MutationButton from "@/components/ui/mutationButton";
 import StaticButton from "@/components/ui/staticButton";
 import { DataTable } from "@/components/ui/table";
 import { useDialog } from "@/hooks/useDialog";
 import { useDeletePaperById, useGetPapersByProjectId } from "@/hooks/usePaper";
-import { useGetProjectById } from "@/hooks/useProject";
+import { useGradeAll } from "@/hooks/userGrade";
 import { PaperResponseDTO } from "@/types/PaperResponseDTO";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
@@ -23,6 +24,7 @@ const ProjectView = ({ params }: { params: Promise<{ id: string }> }) => {
     refetch: reloadPapers,
   } = useGetPapersByProjectId(id);
   const deletePaper = useDeletePaperById();
+  const gradeAllPapers = useGradeAll();
 
   const [selectedPaper, setSelectedPaper] = useState<PaperResponseDTO | null>(
     null
@@ -110,7 +112,7 @@ const ProjectView = ({ params }: { params: Promise<{ id: string }> }) => {
         }}
       />
       <MarkingForm projectId={id} />
-      {(isLoading || deletePaper.isPending) && <Loading />}
+      {(isLoading || deletePaper.isPending || gradeAllPapers.isPending) && <Loading />}
       {isError && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
           <p className="font-bold">Error loading papers</p>
@@ -123,6 +125,14 @@ const ProjectView = ({ params }: { params: Promise<{ id: string }> }) => {
         </div>
       )}
       <h1 className="py-3 font-bold text-2xl">Stuents Answer Sheets</h1>
+      <MutationButton onClick={()=>{
+        
+        gradeAllPapers.mutate({ projectId: id },{
+          onSuccess:()=>{
+            reloadPapers();
+          }
+        });
+      } } >GradeAll</MutationButton>
       <DataTable columns={columns} data={data ?? []} />
     </div>
   );

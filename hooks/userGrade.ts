@@ -7,3 +7,12 @@ export const useGrade = () => {
       graderApi.grade({ markingId, paperId }),
   });
 };
+
+export const useGradeAll =()=>{
+  return useMutation(
+    {
+      mutationFn: ({ projectId }: { projectId: string }) =>
+        graderApi.gradeAll( projectId ),
+    }
+  )
+}

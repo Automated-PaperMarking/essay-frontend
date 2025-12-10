@@ -14,4 +14,11 @@ export const graderApi = {
     );
     return response;
   },
+
+  gradeAll: async (projectId: string): Promise<ApiResponseDTO> => {
+    const response: ApiResponseDTO = await apiService.put(
+      `/grade/all?projectId=${projectId}`
+    );
+    return response;
+  }
 };
