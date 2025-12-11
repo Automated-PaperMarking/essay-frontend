@@ -8,14 +8,16 @@ import { DataTable } from "@/components/ui/table";
 import { useDialog } from "@/hooks/useDialog";
 import { useDeletePaperById, useGetPapersByProjectId } from "@/hooks/usePaper";
 import { useGradeAll } from "@/hooks/userGrade";
-import { useGenerateReport } from "@/hooks/useProject";
+import { useGenerateReport, useGetProjectById } from "@/hooks/useProject";
 import { PaperResponseDTO } from "@/types/PaperResponseDTO";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
+import { useProjectContext } from "@/contexts/projectContext";
 
 const ProjectView = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
+  const { updateProjectData } = useProjectContext();
 
   const {
     data,
@@ -24,9 +26,19 @@ const ProjectView = ({ params }: { params: Promise<{ id: string }> }) => {
     error,
     refetch: reloadPapers,
   } = useGetPapersByProjectId(id);
+
+  const { data: projectData } = useGetProjectById(id);
+
   const deletePaper = useDeletePaperById();
   const gradeAllPapers = useGradeAll();
   const generateReport = useGenerateReport();
+
+  // Save project data to context when it's loaded
+  useEffect(() => {
+    if (projectData) {
+      updateProjectData(projectData);
+    }
+  }, [projectData, updateProjectData]);
 
   const [selectedPaper, setSelectedPaper] = useState<PaperResponseDTO | null>(
     null

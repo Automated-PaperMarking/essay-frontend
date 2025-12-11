@@ -125,6 +125,7 @@ const MarkingForm: React.FC<MarkingFormProps> = ({ projectId }) => {
       toast.error("No marking ID found.");
       return;
     }
+    console.log("Deleting marking with ID:", getProjectById.data.markingId);
 
     setLoading(true);
     deleteMarking
@@ -135,6 +136,9 @@ const MarkingForm: React.FC<MarkingFormProps> = ({ projectId }) => {
         if (updatedProject) {
           updateProjectData(updatedProject);
         }
+        // Reset local state
+        setMarkingSchemeUploaded(false);
+        setMarkingScheme(null);
         toast.success("Marking deleted successfully!");
       })
       .catch((error) => {
@@ -296,6 +300,7 @@ const MarkingForm: React.FC<MarkingFormProps> = ({ projectId }) => {
                   </Link>
 
                   <button
+                    type="button"
                     onClick={handleDeleteMarking}
                     className="px-6 py-3 rounded-xl text-white font-semibold text-sm
                       bg-gradient-to-r from-red-500 to-rose-600 

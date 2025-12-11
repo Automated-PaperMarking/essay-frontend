@@ -1,5 +1,5 @@
 import { markingApi } from "@/services/markingApi";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetMarkingById = (id: string) => {
   return useQuery({
@@ -12,7 +12,18 @@ export const useGetMarkingById = (id: string) => {
 };
 
 export const useDeleteMarkingById = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (id: string) => markingApi.deleteMarking(id),
+    onSuccess: () => {
+      // Invalidate all marking-related queries
+      queryClient.invalidateQueries({ queryKey: ["marking"] });
+      // Invalidate all project queries to refresh project data
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["project"] });
+      // Invalidate papers as they might be affected
+      queryClient.invalidateQueries({ queryKey: ["papers"] });
+    },
   });
 };
