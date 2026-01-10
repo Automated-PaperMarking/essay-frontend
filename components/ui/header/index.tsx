@@ -6,6 +6,7 @@ import { useDialog } from "@/hooks/useDialog";
 import UpdateProjectForm from "@/components/forms/updateProjectForm";
 import { useGetProjectById } from "@/hooks/useProject";
 import SideView from "../sideview";
+import Link from "next/link";
 
 const Header = () => {
   const { projectData } = useProjectContext();
@@ -33,7 +34,7 @@ const Header = () => {
           {/* Logo Section */}
           <div className="relative group">
             <div className="absolute -inset-1 bg-accent/20 rounded-lg blur opacity-20 group-hover:opacity-30 transition duration-300"></div>
-            <div className="relative flex items-center gap-3 px-4 py-2 bg-white rounded-lg border border-border">
+            <Link href="/" className="relative flex items-center gap-3 px-4 py-2 bg-white rounded-lg border border-border">
               <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center shadow-md">
                 <svg
                   className="w-5 h-5 text-white"
@@ -52,7 +53,7 @@ const Header = () => {
               <span className="font-bold text-2xl text-foreground">
                 Essay Grading
               </span>
-            </div>
+            </Link>
           </div>
 
           {/* Project Section with Modern Card Design */}
